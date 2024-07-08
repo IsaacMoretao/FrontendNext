@@ -6,6 +6,7 @@ import Exclusedbox from '../../../../public/Exclusedbox.svg'
 import ProductTable from '../../components/Table'
 import { useTheme } from '@/contexts/themeContext'
 import { useState, ChangeEvent, useEffect } from 'react'
+import Link from 'next/link'
 
 export type Product = {
   id: number
@@ -14,7 +15,7 @@ export type Product = {
   valor: string
   quantidade: string
   date: string
-  foto: string | null // Certifique-se de incluir todas as propriedades necessárias, como 'foto'
+  foto: string | null
 }
 
 export default function Home() {
@@ -57,55 +58,83 @@ export default function Home() {
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setProductData((prevData) =>
-      prevData ? { ...prevData, [name]: value } : null,
-    )
+    const { name, value, files } = e.target
+    if (files) {
+      setProductData((prevData) =>
+        prevData ? { ...prevData, [name]: files[0] } : null,
+      )
+    } else {
+      setProductData((prevData) =>
+        prevData ? { ...prevData, [name]: value } : null,
+      )
+    }
   }
 
   const handleEditSelected = async () => {
     if (!productData) return
 
-    const updatedProduct = {
-      nome: productData.nome,
-      // outros campos...
+    const formData = new FormData()
+    formData.append('id', String(productData.id))
+    formData.append('nome', productData.nome)
+    formData.append('observacoes', productData.observacoes)
+    formData.append('valor', productData.valor)
+    formData.append('quantidade', productData.quantidade)
+
+    if (productData.date) {
+      formData.append('date', productData.date)
+    }
+
+    if (
+      productData.foto &&
+      typeof productData.foto === 'object' &&
+      'name' in productData.foto &&
+      'size' in productData.foto
+    ) {
+      formData.append('foto', productData.foto as File)
     }
 
     try {
-      await fetch(`/api/editProduct/${productData.id}`, {
+      const response = await fetch(`/api/editProduct`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedProduct),
+        body: formData,
       })
 
+      if (!response.ok) {
+        throw new Error('Erro ao editar o produto')
+      }
+
+      const updatedProduct = await response.json()
+      console.log('Item editado com sucesso:', updatedProduct)
+
+      // Atualiza a lista de produtos após a edição
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.id === productData.id
-            ? { ...product, ...updatedProduct }
+            ? { ...product, ...productData }
             : product,
         ),
       )
 
-      console.log('Item editado com sucesso:', productData.id)
       handleClosePopup()
     } catch (error) {
       console.error('Erro ao editar o produto:', error)
+      // Exibir uma mensagem de erro para o usuário, se necessário
     }
   }
 
   const handleDeleteSelected = async () => {
     try {
-      for (const id of selectedItems) {
-        await fetch(`/api/deleteProduct/${id}`, {
-          method: 'DELETE',
-        })
+      await fetch(`/api/deleteProduct`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: selectedItems }),
+      })
 
-        setProducts((prevProducts) =>
-          prevProducts.filter((product) => product.id !== id),
-        )
-      }
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => !selectedItems.includes(product.id)),
+      )
 
       console.log('Itens deletados com sucesso:', selectedItems)
       setSelectedItems([])
@@ -142,17 +171,25 @@ export default function Home() {
                 )
               }
               disabled={selectedItems.length !== 1}
-              className={`${selectedItems.length !== 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`${
+                selectedItems.length !== 1
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
+              }`}
             >
               <Image src={Penbox} alt="Pen Box" />
             </button>
-            <button>
+            <Link href="/Products">
               <Image src={Plusbox} alt="Plus Box" />
-            </button>
+            </Link>
             <button
               onClick={handleDeleteSelected}
               disabled={selectedItems.length === 0}
-              className={`${selectedItems.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`${
+                selectedItems.length === 0
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
+              }`}
             >
               <Image src={Exclusedbox} alt="Exclused Box" />
             </button>
@@ -164,6 +201,7 @@ export default function Home() {
         <ProductTable
           onSelectItem={handleSelectItem}
           selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
           products={products}
         />
       </div>
@@ -181,6 +219,36 @@ export default function Home() {
                 className="w-full mt-1 p-2 border border-gray-300 rounded"
               />
             </label>
+            <label className="block mb-2">
+              Observações:
+              <input
+                type="text"
+                name="observacoes"
+                value={productData.observacoes}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border border-gray-300 rounded"
+              />
+            </label>
+            <label className="block mb-2">
+              Valor:
+              <input
+                type="text"
+                name="valor"
+                value={productData.valor}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border border-gray-300 rounded"
+              />
+            </label>
+            <label className="block mb-2">
+              Quantidade:
+              <input
+                type="text"
+                name="quantidade"
+                value={productData.quantidade}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border border-gray-300 rounded"
+              />
+            </label>
             <div className="flex justify-end gap-2 mt-4">
               <button
                 onClick={handleEditSelected}
@@ -190,7 +258,7 @@ export default function Home() {
               </button>
               <button
                 onClick={handleClosePopup}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
               >
                 Cancelar
               </button>

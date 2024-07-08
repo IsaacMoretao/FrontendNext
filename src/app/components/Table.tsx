@@ -25,12 +25,15 @@ type Product = {
 type ProductTableProps = {
   onSelectItem: (id: number) => void
   selectedItems: number[]
+  setSelectedItems: (items: number[]) => void
   products: Product[]
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectItem,
   selectedItems,
+  setSelectedItems,
   products,
 }) => {
   const [selectAll, setSelectAll] = useState(false)
@@ -82,17 +85,21 @@ const ProductTable: React.FC<ProductTableProps> = ({
   }
 
   const handleSelectAll = () => {
-    setSelectAll(!selectAll) // Alternar estado de seleção de todos
-    // Aqui você pode adicionar lógica para selecionar/deselecionar todos os produtos
-    if (!selectAll) {
-      filteredProducts.forEach((product) => onSelectItem(product.id))
+    if (selectAll) {
+      setSelectedItems([])
     } else {
-      selectedItems.forEach((id) => onSelectItem(id))
+      const allItemIds = filteredProducts.map((product) => product.id)
+      setSelectedItems(allItemIds)
     }
+    setSelectAll(!selectAll)
   }
 
   const handleSelectItem = (id: number) => {
-    onSelectItem(id)
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter((item) => item !== id))
+    } else {
+      setSelectedItems([...selectedItems, id])
+    }
   }
 
   const clearFilters = () => {

@@ -6,7 +6,7 @@ import { useTheme } from '@/contexts/themeContext'
 
 interface Product {
   id: string
-  foto: string | null
+  foto: File | null
   nome: string
   observacoes: string
   valor: string
@@ -32,7 +32,7 @@ export default function Products() {
     if (name === 'foto' && files && files.length > 0) {
       setProduto((prev) => ({
         ...prev,
-        foto: URL.createObjectURL(files[0]),
+        foto: files[0],
       }))
     } else {
       setProduto((prev) => ({
@@ -50,10 +50,23 @@ export default function Products() {
     e.preventDefault()
     try {
       const id = new Date().getTime().toString()
-      const response = await axios.post('/api/salvarProduto', {
-        ...produto,
-        id,
+
+      const formData = new FormData()
+      formData.append('id', id)
+      formData.append('nome', produto.nome)
+      formData.append('observacoes', produto.observacoes)
+      formData.append('valor', produto.valor)
+      formData.append('quantidade', produto.quantidade)
+      if (produto.foto) {
+        formData.append('foto', produto.foto)
+      }
+
+      const response = await axios.post('/api/salvarProduto', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       })
+
       alert(response.data.message)
       setProduto({
         id: '',
@@ -98,7 +111,7 @@ export default function Products() {
                 >
                   {produto.foto ? (
                     <Image
-                      src={produto.foto}
+                      src={URL.createObjectURL(produto.foto)}
                       alt="Foto do Produto"
                       className="w-full h-full object-cover rounded-lg"
                       layout="responsive"
