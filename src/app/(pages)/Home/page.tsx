@@ -7,15 +7,16 @@ import ProductTable from '../../components/Table'
 import { useTheme } from '@/contexts/themeContext'
 import { useState, ChangeEvent, useEffect } from 'react'
 import Link from 'next/link'
+import ProductCard from '@/app/components/Card'
 
 export type Product = {
   id: number
   nome: string
   observacoes: string
   valor: string
-  quantidade: string
+  quantidade: number // alterado de string para number
   date: string
-  foto: string | null
+  foto: string | undefined
 }
 
 export default function Home() {
@@ -65,7 +66,12 @@ export default function Home() {
       )
     } else {
       setProductData((prevData) =>
-        prevData ? { ...prevData, [name]: value } : null,
+        prevData
+          ? {
+              ...prevData,
+              [name]: name === 'quantidade' ? parseInt(value) : value,
+            }
+          : null,
       )
     }
   }
@@ -78,7 +84,7 @@ export default function Home() {
     formData.append('nome', productData.nome)
     formData.append('observacoes', productData.observacoes)
     formData.append('valor', productData.valor)
-    formData.append('quantidade', productData.quantidade)
+    formData.append('quantidade', String(productData.quantidade)) // convertendo para string
 
     if (productData.date) {
       formData.append('date', productData.date)
@@ -106,7 +112,6 @@ export default function Home() {
       const updatedProduct = await response.json()
       console.log('Item editado com sucesso:', updatedProduct)
 
-      // Atualiza a lista de produtos após a edição
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.id === productData.id
@@ -118,7 +123,6 @@ export default function Home() {
       handleClosePopup()
     } catch (error) {
       console.error('Erro ao editar o produto:', error)
-      // Exibir uma mensagem de erro para o usuário, se necessário
     }
   }
 
@@ -145,12 +149,17 @@ export default function Home() {
 
   return (
     <main
-      className={`mt-16 p-14 ml-16 h-auto transition-all ${
+      className={`sm:mt-16 p-14 sm:ml-16 h-auto transition-all ${
         darkMode ? 'text-white bg-gray-400' : 'text-black bg-white'
       }`}
     >
+      <div className="max-sm:min-h-[100vh]">
+        {products.map((product, index) => (
+          <ProductCard key={index} product={product} />
+        ))}
+      </div>
       <div
-        className={`w-full h-min p-5 rounded ${
+        className={`w-full max-sm:hidden h-min p-5 rounded ${
           darkMode ? 'text-white bg-gray-300' : 'text-black bg-gray-100'
         }`}
       >
@@ -164,9 +173,9 @@ export default function Home() {
                     nome: '',
                     observacoes: '',
                     valor: '',
-                    quantidade: '',
+                    quantidade: 0,
                     date: '',
-                    foto: '',
+                    foto: undefined,
                   },
                 )
               }
@@ -242,7 +251,7 @@ export default function Home() {
             <label className="block mb-2">
               Quantidade:
               <input
-                type="text"
+                type="number"
                 name="quantidade"
                 value={productData.quantidade}
                 onChange={handleInputChange}

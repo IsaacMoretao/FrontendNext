@@ -17,9 +17,9 @@ type Product = {
   nome: string
   observacoes: string
   valor: string
-  quantidade: string
+  quantidade: number // alterado de string para number
   date: string
-  foto: string | null
+  foto: string | undefined
 }
 
 type ProductTableProps = {
@@ -62,9 +62,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
       product.observacoes
         .toLowerCase()
         .includes(appliedFilters.observacoes.toLowerCase()) &&
-      product.quantidade
-        .toLowerCase()
-        .includes(appliedFilters.quantidade.toLowerCase())
+      product.quantidade.toString().includes(appliedFilters.quantidade) // Convertendo quantidade para string para comparação
     )
   })
 

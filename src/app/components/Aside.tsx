@@ -17,16 +17,18 @@ const Aside: React.FC = () => {
   const navItems = [
     { href: '/Home', src: Home, alt: 'Home' },
     { href: '/Products', src: Book, alt: 'Book' },
-    { href: '/2', src: Box, alt: 'Box' },
+    { href: '#', src: Box, alt: 'Box' },
     { href: '#', src: Settings, alt: 'Settings' },
     { href: '#', src: HamburguerButton, alt: 'HamburguerButton' },
   ]
 
   return (
     <nav
-      className={`flex flex-col fixed top-0 left-0 bottom-0 w-16 ${darkMode ? 'bg-gray-300 text-white' : 'bg-gray-100 text-black'} items-center`}
+      className={`flex sm:flex-col fixed sm:top-0 left-0 bottom-0 w-16
+        ${darkMode ? 'bg-gray-300 text-white' : 'bg-gray-100 text-black'}
+        items-center max-sm:right-0 z-20 max-sm:w-full max-sm:h-16`}
     >
-      <figure className="pt-2 mb-10">
+      <figure className="pt-2 mb-10 max-sm:hidden">
         <Image
           src={Logo}
           alt="Logo"
@@ -35,14 +37,14 @@ const Aside: React.FC = () => {
           height={56}
         />
       </figure>
-      <ul className="flex flex-col gap-5">
+      <div className="flex max-sm:justify-between max-sm:items-center max-sm:px-5 max-sm:w-full sm:flex-col sm:gap-5">
         {navItems.map((item, index) => (
-          <li
+          <div
             key={index}
-            className={`relative ${currentPath === item.href ? 'pl-4' : ''}`}
+            className={`relative ${currentPath === item.href ? 'pl-4 max-sm:p-5 max-sm:rounded-full max-sm:bg-purple-600 max-sm:bottom-5 ' : ''}`}
           >
             {currentPath === item.href && (
-              <span className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 rounded h-full bg-blue-500"></span>
+              <span className="max-sm:hidden absolute left-0 top-1/2 transform -translate-y-1/2 w-1 rounded h-full bg-blue-500"></span>
             )}
             {currentPath === item.href ? (
               <span className="block">
@@ -53,9 +55,9 @@ const Aside: React.FC = () => {
                 <Image src={item.src} alt={item.alt} />
               </Link>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </nav>
   )
 }
