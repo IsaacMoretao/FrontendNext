@@ -10,10 +10,12 @@ import HamburguerButton from '../../../public/HamburguerButton.svg'
 import { useTheme } from '@/contexts/themeContext'
 import Image from 'next/image'
 
+// Componente Aside
 const Aside: React.FC = () => {
-  const { darkMode } = useTheme()
-  const currentPath = usePathname()
+  const { darkMode } = useTheme() // Utiliza o contexto de tema
+  const currentPath = usePathname() // Obtém o caminho atual
 
+  // Itens de navegação
   const navItems = [
     { href: '/Home', src: Home, alt: 'Home' },
     { href: '/Products', src: Book, alt: 'Book' },

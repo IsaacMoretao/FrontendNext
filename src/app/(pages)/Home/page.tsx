@@ -1,4 +1,5 @@
 'use client'
+
 import Image from 'next/image'
 import Penbox from '../../../../public/Penbox.svg'
 import Plusbox from '../../../../public/Plusbox.svg'
@@ -9,6 +10,7 @@ import { useState, ChangeEvent, useEffect } from 'react'
 import Link from 'next/link'
 import ProductCard from '@/app/components/Card'
 
+// Tipagem do produto
 export type Product = {
   id: number
   nome: string
@@ -20,16 +22,18 @@ export type Product = {
 }
 
 export default function Home() {
-  const { darkMode } = useTheme()
-  const [selectedItems, setSelectedItems] = useState<number[]>([])
-  const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const [productData, setProductData] = useState<Product | null>(null)
-  const [products, setProducts] = useState<Product[]>([])
+  const { darkMode } = useTheme() // Utiliza o contexto de tema
+  const [selectedItems, setSelectedItems] = useState<number[]>([]) // Estado para itens selecionados
+  const [isPopupOpen, setIsPopupOpen] = useState(false) // Estado para o popup
+  const [productData, setProductData] = useState<Product | null>(null) // Dados do produto para edição
+  const [products, setProducts] = useState<Product[]>([]) // Lista de produtos
 
+  // Fetch de produtos ao montar o componente
   useEffect(() => {
     fetchProducts()
   }, [])
 
+  // Função para buscar produtos da API
   const fetchProducts = () => {
     fetch('/api/getProducts')
       .then((response) => response.json())
@@ -41,6 +45,7 @@ export default function Home() {
       })
   }
 
+  // Manipula seleção de item
   const handleSelectItem = (id: number) => {
     if (selectedItems.includes(id)) {
       setSelectedItems(selectedItems.filter((item) => item !== id))
@@ -49,15 +54,18 @@ export default function Home() {
     }
   }
 
+  // Abre o popup para edição de produto
   const handleOpenPopup = (product: Product) => {
     setProductData(product)
     setIsPopupOpen(true)
   }
 
+  // Fecha o popup de edição
   const handleClosePopup = () => {
     setIsPopupOpen(false)
   }
 
+  // Manipula mudanças no input
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target
     if (files) {
@@ -76,6 +84,7 @@ export default function Home() {
     }
   }
 
+  // Manipula a edição do produto selecionado
   const handleEditSelected = async () => {
     if (!productData) return
 
@@ -126,6 +135,7 @@ export default function Home() {
     }
   }
 
+  // Manipula a exclusão dos produtos selecionados
   const handleDeleteSelected = async () => {
     try {
       await fetch(`/api/deleteProduct`, {
@@ -149,7 +159,7 @@ export default function Home() {
 
   return (
     <main
-      className={`sm:mt-16 p-14 sm:ml-16 h-auto transition-all ${
+      className={`sm:mt-16 p-14 sm:ml-16 min-h-[100vh] transition-all ${
         darkMode ? 'text-white bg-gray-400' : 'text-black bg-white'
       }`}
     >

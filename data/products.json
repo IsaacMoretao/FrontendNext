@@ -1,37 +1,11 @@
 [
   {
-    "id": "1720403133715",
-    "nome": "asd",
-    "observacoes": "Observações",
-    "valor": "15",
-    "quantidade": "66",
-    "foto": "/uploads/1720403134931_Untitled (2).png"
-  },
-  {
-    "id": "1720403807786",
-    "nome": "asd",
-    "observacoes": "000",
-    "valor": "000",
-    "quantidade": "000",
-    "foto": "/uploads/1720403809401_certificado CyberClass.png",
-    "dataCadastro": "2024-07-08T01:56:49.403Z"
-  },
-  {
-    "id": "1720404001738",
-    "nome": "Isaac",
-    "observacoes": "~~~~",
-    "valor": "1",
-    "quantidade": "0",
-    "foto": "/uploads/1720404001851_Frame 6869.png",
-    "dataCadastro": "2024-07-08T02:00:01.854Z"
-  },
-  {
-    "id": "1720404141248",
-    "nome": "irineu",
-    "observacoes": "ppp",
-    "valor": "999",
-    "quantidade": "999",
-    "foto": "/uploads/1720404141347_Untitled (4).png",
-    "date": "2024-07-08"
+    "id": "1720661983790",
+    "nome": "Isaac Moretão",
+    "observacoes": "Muito dedicado e disposto a aprender ",
+    "valor": "3000",
+    "quantidade": "4000",
+    "foto": "/uploads/1720661988677_91755254.png",
+    "date": "2024-07-11"
   }
 ]

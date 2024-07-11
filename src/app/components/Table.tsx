@@ -12,6 +12,7 @@ import {
 } from 'react-icons/bi'
 import { useTheme } from '@/contexts/themeContext'
 
+// Tipo Product para tipagem dos produtos
 type Product = {
   id: number
   nome: string
@@ -22,6 +23,7 @@ type Product = {
   foto: string | undefined
 }
 
+// Propriedades do componente ProductTable
 type ProductTableProps = {
   onSelectItem: (id: number) => void
   selectedItems: number[]
@@ -29,6 +31,7 @@ type ProductTableProps = {
   products: Product[]
 }
 
+// Componente ProductTable
 const ProductTable: React.FC<ProductTableProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectItem,
@@ -52,36 +55,41 @@ const ProductTable: React.FC<ProductTableProps> = ({
   })
   const { darkMode } = useTheme()
 
+  // Função para alterar a página atual
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
   }
 
+  // Filtragem dos produtos com base nos filtros aplicados
   const filteredProducts = products.filter((product) => {
     return (
       product.nome.toLowerCase().includes(appliedFilters.nome.toLowerCase()) &&
       product.observacoes
         .toLowerCase()
         .includes(appliedFilters.observacoes.toLowerCase()) &&
-      product.quantidade.toString().includes(appliedFilters.quantidade) // Convertendo quantidade para string para comparação
+      product.quantidade.toString().includes(appliedFilters.quantidade)
     )
   })
 
+  // Produtos exibidos na página atual
   const currentItems = filteredProducts.slice(
     (currentPage - 1) * 10,
     currentPage * 10,
   )
-
   const totalPages = Math.ceil(filteredProducts.length / 10)
 
+  // Função para alterar os filtros
   const handleFilterChange = (key: string, value: string) => {
     setFilters({ ...filters, [key]: value })
   }
 
+  // Função para aplicar os filtros
   const applyFilters = () => {
     setAppliedFilters({ ...filters })
     setCurrentPage(1)
   }
 
+  // Função para selecionar ou desmarcar todos os itens
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedItems([])
@@ -92,6 +100,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
     setSelectAll(!selectAll)
   }
 
+  // Função para selecionar ou desmarcar um item
   const handleSelectItem = (id: number) => {
     if (selectedItems.includes(id)) {
       setSelectedItems(selectedItems.filter((item) => item !== id))
@@ -100,6 +109,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
     }
   }
 
+  // Função para limpar os filtros
   const clearFilters = () => {
     setFilters({
       nome: '',
@@ -122,7 +132,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
         className={`overflow-x-auto ${darkMode ? 'bg-gray-400 text-white' : 'bg-white text-black'} border border-gray-200 rounded-md`}
       >
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-purple-500">
+          <thead className="bg-purple-500 w-full">
             <tr>
               <th className="px-4 py-2">
                 <input

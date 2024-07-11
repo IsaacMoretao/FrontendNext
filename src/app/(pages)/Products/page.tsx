@@ -4,6 +4,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import { useTheme } from '@/contexts/themeContext'
 
+// Interface para tipagem do produto
 interface Product {
   id: string
   foto: File | null
@@ -14,7 +15,9 @@ interface Product {
 }
 
 export default function Products() {
-  const { darkMode } = useTheme()
+  const { darkMode } = useTheme() // Utiliza o contexto de tema
+
+  // Estado inicial do produto
   const [produto, setProduto] = useState<Product>({
     id: '',
     foto: null,
@@ -24,9 +27,12 @@ export default function Products() {
     quantidade: '',
   })
 
+  // Manipula mudanças nos inputs e textarea
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const { name, value, files } = e.target
 
     if (name === 'foto' && files && files.length > 0) {
@@ -42,14 +48,16 @@ export default function Products() {
     }
   }
 
+  // Abre o seletor de arquivo quando o botão é clicado
   const handleClick = () => {
     document.getElementById('fileInput')?.click()
   }
 
+  // Envia o formulário
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const id = new Date().getTime().toString()
+      const id = new Date().getTime().toString() // Gera um ID único
 
       const formData = new FormData()
       formData.append('id', id)
@@ -68,6 +76,8 @@ export default function Products() {
       })
 
       alert(response.data.message)
+
+      // Reseta o formulário
       setProduto({
         id: '',
         foto: null,
@@ -87,7 +97,7 @@ export default function Products() {
       className={`${darkMode ? 'text-gray-100 bg-gray-400' : 'text-black bg-white'} transition-all mt-16 p-14 ml-16 h-screen`}
     >
       <div
-        className={`w-full h-full ${darkMode ? 'text-gray-100 bg-gray-300' : 'text-black bg-gray-100'} p-5  rounded-lg shadow-md `}
+        className={`w-full h-full ${darkMode ? 'text-gray-100 bg-gray-300' : 'text-black bg-gray-100'} p-5 rounded-lg shadow-md`}
       >
         <header>
           <p className="font-bold mb-3">Cadastrar Produto</p>
@@ -150,12 +160,12 @@ export default function Products() {
                   onChange={handleChange}
                   className={`w-full px-3 py-2 border rounded ${darkMode ? 'text-gray-100 bg-gray-300' : 'text-black bg-white'}`}
                 ></textarea>
-                <p className=" text-xs mt-1 text-right">00/100</p>
+                <p className="text-xs mt-1 text-right">00/100</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block  text-sm font-bold mb-2">Valor</label>
+                  <label className="block text-sm font-bold mb-2">Valor</label>
                   <div className="flex items-center">
                     <span className="inline-block px-3 py-2 border rounded-l-lg">
                       R$
